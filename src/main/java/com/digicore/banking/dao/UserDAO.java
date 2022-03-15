@@ -15,17 +15,15 @@ import java.util.stream.Stream;
 /**
  UseDAO exposes several APIs to store and access User data
  */
-public class UserDAO {
+public class UserDAO extends BaseDAO<User> {
 
-    private final ObjectMapper mapper = new ObjectMapper();
-    private final MockORM mockORM = new MockORM();
     private final String FILENAME = "user.json";
 
     /**
      * This method reads and loads the content of the database in memory
      * @return TreeMap<Integer, User>
      */
-    private Stream<String> dbLoader() {
+    Stream<String> dbLoader() {
         if (!Files.exists(Path.of(FILENAME))){
             MockORM.create(FILENAME);
         }
@@ -38,7 +36,7 @@ public class UserDAO {
      * @return TreeMap<Integer, User>
      * @throws JsonProcessingException if the json is invalid
      */
-    private TreeMap<Integer, User> deserialize() throws JsonProcessingException {
+    TreeMap<Integer, User> deserialize() throws JsonProcessingException {
         String jsonString  = dbLoader().collect(Collectors.joining());
         TypeReference<TreeMap<Integer, User>> typeRef = new TypeReference<>() {};
         return mapper.readValue(jsonString, typeRef);

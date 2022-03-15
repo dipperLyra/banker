@@ -22,13 +22,12 @@ public class MockORMTests {
     private final TreeMap<Integer, User> userMap = new TreeMap<>();
     private static final String filename = "user.json";
     private String jsonResult = "";
-    private boolean created;
     private boolean written;
 
 
     @BeforeEach
     void init() throws JsonProcessingException {
-        created = MockORM.create(filename);
+        MockORM.create(filename);
         userMap.put(1, user);
 
         jsonResult = mapper.writerWithDefaultPrettyPrinter()
@@ -40,11 +39,6 @@ public class MockORMTests {
     void tearDown() {
         MockORM.delete(filename);
         jsonResult = "";
-    }
-
-    @Test
-    void create() {
-        assertTrue(created);
     }
 
     @Test
