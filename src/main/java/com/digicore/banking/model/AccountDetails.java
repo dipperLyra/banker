@@ -1,4 +1,3 @@
 package com.digicore.banking.model;
 
-public record AccountDetails(int userId, String accountNumber, Double balance) {
-}
+public record AccountDetails(int id, int userId, String accountNumber, Double balance) {}

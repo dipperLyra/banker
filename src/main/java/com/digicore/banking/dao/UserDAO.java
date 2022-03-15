@@ -5,52 +5,31 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  UseDAO exposes several APIs to store and access User data
  */
 public class UserDAO extends BaseDAO<User> {
 
-    private final String FILENAME = "user.json";
-
-    /**
-     * This method reads and loads the content of the database in memory
-     * @return TreeMap<Integer, User>
-     */
-    Stream<String> dbLoader() {
-        if (!Files.exists(Path.of(FILENAME))){
-            MockORM.create(FILENAME);
-        }
-
-        return mockORM.read(FILENAME);
+    public UserDAO() {
+        setFileName("user.json");
     }
 
-    /**
-     * Deserialize the json read into memory to map
-     * @return TreeMap<Integer, User>
-     * @throws JsonProcessingException if the json is invalid
-     */
+
+    @Override
     TreeMap<Integer, User> deserialize() throws JsonProcessingException {
         String jsonString  = dbLoader().collect(Collectors.joining());
         TypeReference<TreeMap<Integer, User>> typeRef = new TypeReference<>() {};
         return mapper.readValue(jsonString, typeRef);
     }
 
-    /**
-     * Get a User by the id.
-     *
-     * @param email the unique key to select a User
-     * @return selected User
-     * @throws JsonProcessingException if the json is invalid
-     */
+    @Override
     public User getOne(String email) throws JsonProcessingException {
-        for (User u : deserialize().values()){
+        TreeMap<Integer, User> map = deserialize();
+        for (User u : map.values()){
             if (u.email().equals(email)) {
                 return u;
             }
@@ -58,21 +37,12 @@ public class UserDAO extends BaseDAO<User> {
         return null;
     }
 
-    /**
-     * Retrieve all Users
-     * @return List of all existing Users
-     * @throws JsonProcessingException if the json is invalid
-     */
+    @Override
     public List<User> getAll() throws JsonProcessingException {
         return deserialize().values().stream().toList();
     }
 
-    /**
-     * Save user. This method can be used to a new user or update an existing user in the datastore
-     * @param user to override or add to the datastore
-     * @return true if user is successfully written to the datastore and false otherwise
-     * @throws JsonProcessingException if the json is invalid
-     */
+    @Override
     public boolean save(User user) throws JsonProcessingException {
         TreeMap<Integer, User> map = deserialize();
 
@@ -90,21 +60,12 @@ public class UserDAO extends BaseDAO<User> {
         return mockORM.write(FILENAME, s);
     }
 
-    /**
-     * Check that user exists
-     * @param id check user by id
-     * @return true if user exists and false otherwise
-     * @throws JsonProcessingException if the json is invalid
-     */
+    @Override
     public boolean exists(int id) throws JsonProcessingException {
         return deserialize().containsKey(id);
     }
 
-    /**
-     * Delete user
-     * @param id fetch user by id
-     * @throws JsonProcessingException if the json is invalid
-     */
+    @Override
     public void delete(int id) throws JsonProcessingException {
         TreeMap<Integer, User> map = deserialize();
 

@@ -15,7 +15,7 @@ import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class UserDAOTests {
+public class UserDAOTests implements BaseDAOTests {
     private final MockORM mockORM = new MockORM();
     private final UserDAO userDAO = new UserDAO();
     private final int userId = 1;
@@ -24,10 +24,11 @@ public class UserDAOTests {
     private final String email = "test@test.com";
     private final TreeMap<Integer, User> userMap = new TreeMap<>();
     private final User user = new User(userId, name, email, password);
-    private static final String FILENAME = "user.json";
+    private static final String FILENAME = "datastore/user.json";
 
     @BeforeEach
-    void init() throws IOException {
+    @Override
+    public void init() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
 
         userMap.put(user.id(), user);
@@ -41,13 +42,15 @@ public class UserDAOTests {
     }
 
     @Test
-    void getOne() throws JsonProcessingException {
+    @Override
+    public void getOne() throws JsonProcessingException {
         User u = userDAO.getOne(email);
         assertEquals(u.email(), email);
     }
 
     @Test
-    void getAll() throws JsonProcessingException {
+    @Override
+    public void getAll() throws JsonProcessingException {
         String email = "test1@test.com";
         User user1 = new User(3, name, email, password);
         assertTrue(userDAO.save(user1));
@@ -57,19 +60,22 @@ public class UserDAOTests {
     }
 
     @Test
-    void save() throws IOException {
+    @Override
+    public void save() throws IOException {
         String email = "test1@test.com";
         User user1 = new User(2, name, email, password);
         assertTrue(userDAO.save(user1));
     }
 
     @Test
-    void exists() throws IOException {
+    @Override
+    public void exists() throws IOException {
         assertTrue(userDAO.exists(userId));
     }
 
     @Test
-    void delete() throws JsonProcessingException {
+    @Override
+    public void delete() throws JsonProcessingException {
         String email = "test1@test.com";
         User user1 = new User(0, name, email, password);
         assertTrue(userDAO.save(user1));
