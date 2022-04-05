@@ -1,6 +1,6 @@
 package com.digicore.banking.dao;
 
-import com.digicore.banking.model.AccountDetails;
+import com.digicore.banking.entity.AccountDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterAll;
@@ -20,12 +20,12 @@ public class AccountDetailsDAOTests implements BaseDAOTests {
     private final MockORM mockORM = new MockORM();
     private final AccountDetailsDAO detailsDAO = new AccountDetailsDAO();
     private final int id = 1;
-    private final String accountNumber = "0123456789";
+
     private final Double balance = 0.0;
     private final int userId = 1;
     private final TreeMap<Integer, AccountDetails> detailsMap = new TreeMap<>();
 
-    private final AccountDetails accountDetails = new AccountDetails(id, userId, accountNumber, balance);
+    private final AccountDetails accountDetails = new AccountDetails(id, userId, balance);
     private static final String FILENAME = "datastore/account-details.json";
 
     @BeforeEach
@@ -46,13 +46,12 @@ public class AccountDetailsDAOTests implements BaseDAOTests {
     @Test
     public void getOne() throws JsonProcessingException {
         AccountDetails a = detailsDAO.getOne(Integer.toString(userId));
-        assertEquals(a.accountNumber(), accountNumber);
+        assertEquals(a.userId(), userId);
     }
 
     @Test
     public void getAll() throws JsonProcessingException {
-        String accountNumber = "0023456789";
-        AccountDetails detail = new AccountDetails(2, userId + 1, accountNumber, balance);
+        AccountDetails detail = new AccountDetails(2, userId + 1, balance);
         assertTrue(detailsDAO.save(detail));
 
         List<AccountDetails> details = detailsDAO.getAll();
@@ -61,8 +60,7 @@ public class AccountDetailsDAOTests implements BaseDAOTests {
 
     @Test
     public void save() throws IOException {
-        String accountNumber = "0022456789";
-        AccountDetails detail = new AccountDetails(3, userId + 1, accountNumber, balance);
+        AccountDetails detail = new AccountDetails(3, userId + 1, balance);
         assertTrue(detailsDAO.save(detail));
     }
 
@@ -73,8 +71,7 @@ public class AccountDetailsDAOTests implements BaseDAOTests {
 
     @Test
     public void delete() throws JsonProcessingException {
-        String accountNumber = "0023456789";
-        AccountDetails detail = new AccountDetails(2, userId + 1, accountNumber, balance);
+        AccountDetails detail = new AccountDetails(2, userId + 1, balance);
         assertTrue(detailsDAO.save(detail));
 
         detailsDAO.delete(userId);

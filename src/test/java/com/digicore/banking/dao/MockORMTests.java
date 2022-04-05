@@ -1,6 +1,6 @@
 package com.digicore.banking.dao;
 
-import com.digicore.banking.model.User;
+import com.digicore.banking.entity.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -18,7 +18,8 @@ public class MockORMTests {
 
     private final MockORM mockORM = new MockORM();
     ObjectMapper mapper = new ObjectMapper();
-    private final User user = new User(1, "testUser", "testAddress", "testPassword");
+
+    private final User user = new User(1, "testUser", "testAddress", "testPassword", "0123456789");
     private final TreeMap<Integer, User> userMap = new TreeMap<>();
     private static final String filename = "user.json";
     private String jsonResult = "";

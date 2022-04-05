@@ -1,9 +1,10 @@
 package com.digicore.banking.dao;
 
-import com.digicore.banking.model.User;
+import com.digicore.banking.entity.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.TreeMap;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 /**
  UseDAO exposes several APIs to store and access User data
  */
+@Service
 public class UserDAO extends BaseDAO<User> {
 
     public UserDAO() {
@@ -20,17 +22,17 @@ public class UserDAO extends BaseDAO<User> {
 
 
     @Override
-    TreeMap<Integer, User> deserialize() throws JsonProcessingException {
+    public TreeMap<Integer, User> deserialize() throws JsonProcessingException {
         String jsonString  = dbLoader().collect(Collectors.joining());
         TypeReference<TreeMap<Integer, User>> typeRef = new TypeReference<>() {};
         return mapper.readValue(jsonString, typeRef);
     }
 
     @Override
-    public User getOne(String email) throws JsonProcessingException {
+    public User getOne(String accountNumber) throws JsonProcessingException {
         TreeMap<Integer, User> map = deserialize();
         for (User u : map.values()){
-            if (u.email().equals(email)) {
+            if (u.accountNumber().equals(accountNumber)) {
                 return u;
             }
         }

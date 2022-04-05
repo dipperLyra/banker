@@ -1,14 +1,16 @@
 package com.digicore.banking.dao;
 
-import com.digicore.banking.model.AccountDetails;
+import com.digicore.banking.entity.AccountDetails;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+@Service
 public class AccountDetailsDAO extends BaseDAO<AccountDetails> {
 
     public AccountDetailsDAO() {
@@ -16,7 +18,7 @@ public class AccountDetailsDAO extends BaseDAO<AccountDetails> {
     }
 
     @Override
-    TreeMap<Integer, AccountDetails> deserialize() throws JsonProcessingException {
+    public TreeMap<Integer, AccountDetails> deserialize() throws JsonProcessingException {
         String jsonString  = dbLoader().collect(Collectors.joining());
         TypeReference<TreeMap<Integer, AccountDetails>> typeRef = new TypeReference<>() {};
         return mapper.readValue(jsonString, typeRef);
@@ -24,15 +26,15 @@ public class AccountDetailsDAO extends BaseDAO<AccountDetails> {
 
     /**
      *
-     * @param s is the String representation of AccountDetails.userId used to select T
+     * @param userId is the String representation of AccountDetails.userId used to select T
      * @return AccountDetails
      * @throws JsonProcessingException
      */
     @Override
-    AccountDetails getOne(String s) throws JsonProcessingException {
+    public AccountDetails getOne(String userId) throws JsonProcessingException {
         TreeMap<Integer, AccountDetails> map = deserialize();
         for (AccountDetails a : map.values()){
-            if (Integer.toString(a.userId()).equals(s)) {
+            if (Integer.toString(a.userId()).equals(userId)) {
                 return a;
             }
         }
@@ -40,12 +42,12 @@ public class AccountDetailsDAO extends BaseDAO<AccountDetails> {
     }
 
     @Override
-    List<AccountDetails> getAll() throws JsonProcessingException {
+    public List<AccountDetails> getAll() throws JsonProcessingException {
         return deserialize().values().stream().toList();
     }
 
     @Override
-    boolean save(AccountDetails accountDetails) throws JsonProcessingException {
+    public boolean save(AccountDetails accountDetails) throws JsonProcessingException {
         TreeMap<Integer, AccountDetails> map = deserialize();
         int lastId = map.lastEntry().getKey();
 
@@ -63,13 +65,13 @@ public class AccountDetailsDAO extends BaseDAO<AccountDetails> {
     }
 
     @Override
-    boolean exists(int userId) throws JsonProcessingException {
+    public boolean exists(int userId) throws JsonProcessingException {
         return deserialize().values().stream()
                 .anyMatch(d -> d.userId() == userId);
     }
 
     @Override
-    void delete(int userId) throws JsonProcessingException {
+    public void delete(int userId) throws JsonProcessingException {
         TreeMap<Integer, AccountDetails> map = deserialize();
 
         map.values().stream()

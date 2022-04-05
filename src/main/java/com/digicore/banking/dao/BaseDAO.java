@@ -9,12 +9,13 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Stream;
 
-abstract class BaseDAO<T> {
+
+abstract class BaseDAO<T> implements DAO<T>{
     ObjectMapper mapper = new ObjectMapper();
     MockORM mockORM = new MockORM();
     protected String FILENAME;
 
-    void setFileName (String s) {
+    public void setFileName (String s) {
         String DIRECTORY = "datastore/";
         FILENAME = DIRECTORY + s;
     }
@@ -23,7 +24,7 @@ abstract class BaseDAO<T> {
      * This method reads and loads the content of the database in memory
      * @return TreeMap<Integer, User>
      */
-    Stream<String> dbLoader() {
+    public Stream<String> dbLoader() {
         if (!Files.exists(Path.of(FILENAME))){
             MockORM.create(FILENAME);
         }
@@ -35,7 +36,7 @@ abstract class BaseDAO<T> {
      * @return TreeMap<Integer, T>
      * @throws JsonProcessingException if the json is invalid
      */
-    abstract TreeMap<Integer, T> deserialize() throws JsonProcessingException;
+    public abstract TreeMap<Integer, T> deserialize() throws JsonProcessingException;
 
     /**
      * Get a User by the id.
@@ -44,14 +45,14 @@ abstract class BaseDAO<T> {
      * @return selected User
      * @throws JsonProcessingException if the json is invalid
      */
-    abstract T getOne(String s) throws JsonProcessingException;
+    public abstract T getOne(String s) throws JsonProcessingException;
 
     /**
      * Retrieve all T
      * @return List of all existing T
      * @throws JsonProcessingException if the json is invalid
      */
-    abstract List<T> getAll() throws JsonProcessingException;
+    public abstract List<T> getAll() throws JsonProcessingException;
 
     /**
      * Save user. This method can be used to a new t or update an existing t in the datastore
@@ -59,7 +60,7 @@ abstract class BaseDAO<T> {
      * @return true if t is successfully written to the datastore and false otherwise
      * @throws JsonProcessingException if the json is invalid
      */
-    abstract boolean save(T t) throws JsonProcessingException;
+    public abstract boolean save(T t) throws JsonProcessingException;
 
     /**
      * Check that user exists
@@ -67,12 +68,12 @@ abstract class BaseDAO<T> {
      * @return true if t exists and false otherwise
      * @throws JsonProcessingException if the json is invalid
      */
-    abstract boolean exists(int id) throws JsonProcessingException;
+    public abstract boolean exists(int id) throws JsonProcessingException;
 
     /**
      * Delete t
      * @param id fetch t by id
      * @throws JsonProcessingException if the json is invalid
      */
-    abstract void delete(int id) throws JsonProcessingException;
+    public abstract void delete(int id) throws JsonProcessingException;
 }
